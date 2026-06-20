@@ -319,10 +319,6 @@ CREATE OR REPLACE VIEW public.v_heatmap_points AS
 | `users.neighborhood_id` | `neighborhoods` | **SET NULL** | — |
 | `neighborhood_adjacency.*` | `neighborhoods` | **CASCADE** | Adjacências somem com o bairro. |
 
-> ✅ Todas as ações acima foram **confirmadas** lendo o DDL extraído do dump
-> (`pg_restore --schema-only`). Em particular: `occurrences.neighborhood_id` é de fato
-> **`ON DELETE SET NULL`**, e `category_id`/`subcategory_id` são **`RESTRICT`**.
->
 > **Recomendação (R-09):** versionar esse DDL em `db/schema.sql` (sem as tabelas de staging) para
 > tornar as garantias auditáveis sem depender do dump binário.
 

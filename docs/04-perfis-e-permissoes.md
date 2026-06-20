@@ -89,13 +89,13 @@ aplicam hoje.
 
 **Notas sobre a matriz real:**
 
-- ✅ **`DELETE /occurrences/:id`** é restrito: apenas o **autor** (dentro da janela de 24 h) ou um
+- **`DELETE /occurrences/:id`** é restrito: apenas o **autor** (dentro da janela de 24 h) ou um
   **admin** podem excluir; terceiros recebem **403**. Alinhado com a edição (RN-10).
-- ✅ **`POST /occurrences`** não aceita mais `status` no corpo — toda ocorrência nasce `pending`. O
+- **`POST /occurrences`** não aceita `status` no corpo — toda ocorrência nasce `pending`. O
   campo `assigned_organization_id` **continua aceito de propósito**: ainda não existe um fluxo que
   defina/troque o órgão responsável, então a atribuição na criação é a única forma disponível hoje
   (R-04 prevê o fluxo dedicado).
-- ✅ **`PATCH /occurrences/:id/status`** e **`POST /occurrences/:id/reopen`** exigem `auth` e são
+- **`PATCH /occurrences/:id/status`** e **`POST /occurrences/:id/reopen`** exigem `auth` e são
   liberados ao **User criador** (autor da ocorrência), ao **agente** e ao **admin**. As transições e
   reaberturas ficam restritas a esses perfis.
 

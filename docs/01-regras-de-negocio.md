@@ -338,11 +338,6 @@ mantendo a confiabilidade do acompanhamento.
 do autor fora do prazo retorna **403 `EDIT_WINDOW_EXPIRED`**. A exclusão também responde **409
 `OCCURRENCE_IN_USE`** quando a ocorrência ainda é referenciada por outros registros.
 
-> ✅ **Restrição da exclusão concluída.** A restrição do `DELETE /occurrences/:id` a autor/admin (com
-> janela de 24 h para o autor) foi **implementada recentemente** — antes, documentações do front
-> apontavam que a exclusão não verificava o autor. Esse ponto está, portanto, **resolvido** e
-> alinhado à edição.
-
 ---
 
 ## RN-11 — Votação (avaliações) e recálculo de score
