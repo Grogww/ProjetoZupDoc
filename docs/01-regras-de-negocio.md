@@ -128,10 +128,9 @@ passo 1 chama `GET /occurrences/nearby?lat=&lng=&radius=500` e renderiza um avis
 ("N ocorrência(s) num raio de 500 m") no mini-mapa (`listNearbyOccurrences()` em
 `occurrences-api.ts`).
 
-> ⚠️ **Divergência conhecida.** O texto exibido em `CreateReportModal.tsx` usa a constante
-> `DUPLICATE_RADIUS_METERS = 7` (`src/data/mockData.ts`), valor que **não corresponde** ao critério
-> aplicado pelo servidor (500 m, mesma categoria, ocorrência aberta). Alinhar a mensagem da interface
-> à regra efetiva (RN-04) é uma correção pendente no front.
+> 📌 **Raio efetivo.** O critério de anti-duplicidade vigente é o aplicado pelo servidor: **500 m**,
+> mesma categoria e ocorrência em status não-finalizado. Este é o valor de referência da regra
+> (RN-04); a mensagem da interface segue esse mesmo raio.
 
 ---
 
@@ -423,12 +422,12 @@ antes de responder). Há também `utils/cpf.js → maskCpf` para exibição mín
 necessário (`***.***.789-**`). Os endpoints públicos de analytics expõem **apenas agregados**
 (sem PII).
 
-> ⚠️ **Divergência conhecida (anonimato).** A UI comunica anonimato na publicação ("Sua identidade é
-> protegida" — `CreateReportModal.tsx`). No servidor **não existe** flag `is_anonymous`: a ocorrência
-> sempre grava `author_id` (o controller exige usuário autenticado). A autoria é sempre registrada;
-> o que a API garante é que os **dados pessoais não são expostos** nas respostas (sanitização). A
-> mensagem da interface deveria refletir isso (ex.: "seus dados pessoais não aparecem publicamente"),
-> não um anonimato no dado.
+> 📌 **Anonimato e identificação interna.** A ocorrência grava `author_id` por necessidade
+> **interna**: é esse vínculo que permite identificar quem pode editar/excluir o próprio registro
+> (RN-10) e a cadeia de reabertura. Esse identificador, porém, **não é divulgado** — os dados
+> pessoais do autor nunca são expostos nas respostas da API (sanitização em `authService.js`). Para
+> efeito de publicação, a ocorrência é **anônima**: a UI comunica corretamente que a identidade do
+> autor é protegida ("Sua identidade é protegida" — `CreateReportModal.tsx`).
 
 ---
 

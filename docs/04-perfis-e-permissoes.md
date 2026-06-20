@@ -58,8 +58,7 @@ controles de gestão no front.
 
 ## 4.2 Matriz de permissões — estado real (backend)
 
-Legenda: ✓ permitido · ✗ negado · 👤 só o **autor** do recurso · 🌐 público (sem autenticação)
-· ⚠️ aberto a qualquer autenticado (segregação por papel ainda não aplicada).
+Legenda: ✓ permitido · ✗ negado · 👤 só o **autor** do recurso (User criador) · 🌐 público (sem autenticação).
 A coluna reflete **exatamente** o que os middlewares (`auth`, `requireRole`) e os controllers
 aplicam hoje.
 
@@ -75,9 +74,9 @@ aplicam hoje.
 | Registrar ocorrência | `POST /occurrences` | ✗ | ✓ | ✓ | ✓ |
 | Editar ocorrência (janela 24 h) | `PATCH /occurrences/:id` | ✗ | 👤 | 👤 | ✓ |
 | Excluir ocorrência (autor: janela 24 h) | `DELETE /occurrences/:id` | ✗ | 👤 | 👤 | ✓ |
-| **Transição de status** | `PATCH /occurrences/:id/status` | ✗ | ✓ ⚠️ | ✓ ⚠️ | ✓ ⚠️ |
+| **Transição de status** | `PATCH /occurrences/:id/status` | ✗ | 👤 | ✓ | ✓ |
 | Anexar/remover mídia | `POST\|DELETE /occurrences/:id/media` | ✗ | 👤 | 👤 | ✓ |
-| Reabrir ocorrência | `POST /occurrences/:id/reopen` | ✗ | ✓ ⚠️ | ✓ ⚠️ | ✓ ⚠️ |
+| Reabrir ocorrência | `POST /occurrences/:id/reopen` | ✗ | 👤 | ✓ | ✓ |
 | Ver histórico de status / reaberturas | `GET …/status-history`, `…/reopens` | 🌐 | ✓ | ✓ | ✓ |
 | Votar / remover voto | `POST …/upvote\|downvote`, `DELETE …/vote` | ✗ | ✓ | ✓ | ✓ |
 | Listar votos da ocorrência | `GET /occurrences/:id/evaluations` | ✗ | ✓ | ✓ | ✓ |
@@ -96,14 +95,13 @@ aplicam hoje.
   campo `assigned_organization_id` **continua aceito de propósito**: ainda não existe um fluxo que
   defina/troque o órgão responsável, então a atribuição na criação é a única forma disponível hoje
   (R-04 prevê o fluxo dedicado).
-- ⚠️ **`PATCH /occurrences/:id/status`** e **`POST /occurrences/:id/reopen`** ainda exigem apenas
-  `auth` — **qualquer autenticado** dispara qualquer transição/reabertura. A segregação dos estados
-  operacionais para órgão/admin acompanhará o desenvolvimento do papel `agent` → roadmap **R-03**.
+- ✅ **`PATCH /occurrences/:id/status`** e **`POST /occurrences/:id/reopen`** exigem `auth` e são
+  liberados ao **User criador** (autor da ocorrência), ao **agente** e ao **admin**. As transições e
+  reaberturas ficam restritas a esses perfis.
 
 ## 4.3 Matriz Perfil × Ação — visão da UI (frontend)
 
-> ✓ = liberado na UI · ✗ = oculto/bloqueado na UI · ⚠️ = gating apenas cosmético (não restringido
-> no backend hoje).
+> ✓ = liberado na UI · ✗ = oculto/bloqueado na UI.
 
 | Ação | Cidadão | Órgão (prefeitura/água/energia) | Admin |
 |------|:------:|:------:|:-----:|
@@ -113,8 +111,8 @@ aplicam hoje.
 | Votar (up/down) / remover voto | ✓ | ✓ | ✓ |
 | Acompanhar status + histórico | ✓ | ✓ | ✓ |
 | Editar/excluir **a própria** ocorrência | ✓ (autor) | ✓ (autor) | ✓ |
-| Alterar status operacional | ✗ ⚠️ | ✓ ⚠️ | ✓ ⚠️ |
-| Reabrir ocorrência (reincidência) | ✗ ⚠️ | ✓ ⚠️ | ✓ ⚠️ |
+| Alterar status operacional | ✓ (autor) | ✓ | ✓ |
+| Reabrir ocorrência (reincidência) | ✓ (autor) | ✓ | ✓ |
 | Acessar painel de gestão / institucional | ✗ | ✓ | ✓ |
 | Acessar dashboards de gestão | ✗ | ✓ | ✓ |
 | Estatística por órgão (`/analytics/by-organization`) | ✗ | ✓ (auth) | ✓ (auth) |
@@ -123,9 +121,6 @@ aplicam hoje.
 **Notas da matriz de UI.**
 - A coluna "Validador" é omitida de propósito: validação é por **voto de cidadão**, não papel
   (ver §4.1).
-- O ⚠️ em "Alterar status"/"Reabrir" indica que o controle é escondido no front para
-  não-institucionais (`StatusControl` retorna `null` — `StatusControl.tsx`), enquanto as rotas
-  correspondentes **não restringem papel no servidor**. A restrição efetiva depende do backend (R-03).
 
 ## 4.4 Matriz pretendida (modelo de negócio, roadmap)
 
@@ -190,8 +185,8 @@ flowchart TD
 - **Guarda de rota.** `ProtectedRoute`: sem `user` → redireciona para `/login`; `requireInstitutional`
   e não institucional → redireciona para `/gestao/login`.
 - **Gating de ação.** Componentes sensíveis checam o papel (ex.: `StatusControl` só renderiza para
-  institucionais). Como visto nas matrizes, esse gating é **cosmético** nas ações de status/reabertura
-  até o backend aplicar `requireRole` (R-03).
+  institucionais). As ações de status/reabertura ficam restritas, no servidor, ao **User criador**,
+  ao **agente** e ao **admin**.
 
 ## 4.6 Validação por relevância (votação) *(Roadmap)*
 

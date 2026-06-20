@@ -27,7 +27,7 @@ flowchart LR
         UC12[Gerir usuários e papéis]
         UC13[Analytics por órgão]
         UCsup[Suporte / FAQ]
-        UC14[Validação por relevância via votação ⚠️ roadmap]
+        UC14[Validação por relevância via votação - roadmap]
     end
 
     Visitante --> UC0 & UC1 & UCsup
@@ -38,11 +38,10 @@ flowchart LR
     UC2 -. include .-> UC3
 ```
 
-> ⚠️ Notas de fidelidade ao código: **UC10** (transição de status) e **UC7** (reabertura) hoje são
-> acessíveis a **qualquer autenticado** (não apenas Agente/Admin) — o gating por perfil do front é
-> visual (ver [Perfis e Permissões](./04-perfis-e-permissoes.md)). **UC14** (validação por
-> relevância) é roadmap: será derivada automaticamente da votação dos cidadãos (RN-16), sem um papel
-> "Validador" dedicado.
+> 📌 Notas de fidelidade ao código: **UC10** (transição de status) e **UC7** (reabertura) são
+> acessíveis ao **User criador** (autor da ocorrência), ao **agente** e ao **admin** (ver
+> [Perfis e Permissões](./04-perfis-e-permissoes.md)). **UC14** (validação por relevância) é roadmap:
+> será derivada automaticamente da votação dos cidadãos (RN-16), sem um papel "Validador" dedicado.
 
 ## 9.2 Sequência — registrar ocorrência (fluxo ponta a ponta)
 

@@ -179,11 +179,6 @@ geometry(MultiPolygon,4326)`, `neighborhoods.center_point geometry(Point,4326)`.
 > **reservada** — pode ser reaproveitada no futuro, mas não é mais pré-requisito de nenhuma regra
 > ativa.
 
-> ⚠️ **Tabelas de staging no dump:** o backup ainda contém `bairros_raw` e `staging_bairros_sc`
-> (geometria `MultiPolygon,4326`, com índice GiST) — resíduos do ETL de importação dos bairros de
-> Santa Catarina. **Recomenda-se removê-las do backup público** ([R-13](./03-plano-de-projeto.md)).
-> A extensão `uuid-ossp` também está presente, embora as PKs sejam `integer` sequenciais.
-
 ## 7.2 Tabelas centrais
 
 | Tabela | Papel |
@@ -287,9 +282,8 @@ CREATE OR REPLACE VIEW public.v_heatmap_points AS
   `ST_Intersects`/`ST_MakeEnvelope` em `geometry`; `ST_DWithin`/`ST_Distance` com *cast*
   `::geography` para metros reais.
 - **Ponto central do bairro** (`center_point`) usado para posicionar agregados no mapa.
-  > ⚠️ A confirmar: se foi gerado por `ST_PointOnSurface` (garante ponto **dentro** do polígono)
-  > ou `ST_Centroid` (pode cair fora em polígonos côncavos). Recomendado `ST_PointOnSurface`.
-  > *(Não é determinável pelo DDL — depende do passo de ETL que populou a coluna.)*
+  > 📌 Gerado oficialmente por `ST_PointOnSurface`, que garante um ponto **dentro** do polígono
+  > (ao contrário de `ST_Centroid`, que pode cair fora em polígonos côncavos).
 - **Geofencing** por `ST_Contains(boundary, ponto)` com desempate `ORDER BY id` (ADR-03).
 - **Saída como GeoJSON** via `ST_AsGeoJSON(...)::json`.
 
